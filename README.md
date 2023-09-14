@@ -1,39 +1,94 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# AdvanceInfiniteScroll
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
+A versatile Flutter package for implementing advanced scrolling. Whether you're looking for infinite scrolling, responsive grid views, or customizable loaders, `AdvanceInfiniteScroll` has got you covered.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
+## Features:
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+- Infinite Scrolling
+- Responsive Grid/List Views
+- Pull-to-Refresh Capability
+- Customizable Loaders For Loading More or Initial Loader
+- "No Data Found" Widget Handling
+- "ON ERROR" Widget Handling,
+- Optimized Rendering for Visible Items
 
-## Features
+## Usage:
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+To use this package, add `advance_infinite_scroll` as a dependency in your `pubspec.yaml` file.
 
-## Getting started
+### Data Fetching:
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+You can fetch data from your network or any source. For demonstration purposes, here's a dummy data-fetching function:
 
 ```dart
-const like = 'sample';
+Future<List<String>> onListFutureDummy(int page, int perPage, Map? params) async {
+  debugPrint("ON LOAD DATA AIS :: $page");
+  await Future.delayed(const Duration(seconds: 1));
+  return List.generate(perPage, (index) => "PAGE :: $page ::");
+  // return [];
+}
 ```
 
-## Additional information
+This function simulates a network call with a delay and generates dummy data.
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+### Basic Setup:
+
+Here's a simple example demonstrating the usage:
+
+```dart
+AdvanceInfiniteScroll<String>(
+    minItemWidth: MediaQuery.of(context).size.width,
+    minItemsPerRow: 1,
+    controller: AdvanceInfiniteScrollController<String>(
+      onFuture: onListFutureDummy,
+      perPage: 14,
+    ),
+    noDataFoundWidget: (c) {
+      return TextButton(
+        onPressed: () {
+          c.refresh();
+        },
+        child: const Text("Refresh"),
+      );
+    },
+    loadingMoreWidget: const Center(
+      child: CircularProgressIndicator(),
+    ),
+    builder: (BuildContext context, listData) {
+      return [
+        Container(
+          color: Colors.green,
+          child: SizedBox(
+            height: 100,
+            width: MediaQuery.of(context).size.width,
+          ),
+        ),
+        ...List.generate(listData.length, (index) {
+          return ListTile(
+            title: Text(
+              "${listData[index]}:: INDEX :: $index ::",
+            ),
+          );
+        }),
+      ];
+    },
+)
+```
+
+### Parameters:
+
+Here's a brief overview of the key parameters:
+
+- `minItemWidth`: The minimum width for an item.
+- `minItemsPerRow`: The minimum number of items per row.
+- `controller`: The controller associated with `AdvanceInfiniteScroll`.
+- `loadingMoreWidget`: A widget to display while more items are being loaded.
+- `builder`: A function that returns a list of widgets based on the provided data.
+
+
+For more information and please checkout example folder.
+
+
+## Contributing:
+
+Feel free to submit issues or pull requests to enhance the package. Contributions are always welcome!

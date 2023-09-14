@@ -7,16 +7,23 @@ import 'package:responsive_grid_list/responsive_grid_list.dart';
 import 'package:responsive_grid_list/src/extensions/list_extensions.dart';
 
 class AdvanceInfiniteScrollController<T> {
+  /// when rendering it will return numbers of item in a row.
   final Function(int)? onItemCount;
+  /// when rendering it will return item's width
   final Function(double)? onItemWidth;
+  /// it is for getting numbers of items per page from network by default
+  /// it will 10.
   final int perPage;
+  /// to get the state of [AdvanceInfiniteScroll]
   AdvanceInfiniteScrollState<T>? _myWidgetState;
+
+
+  /// Callback function on pull up to load more data and refresh
+  final Future<List<T>?> Function(int page, int perPage, Map? params) onFuture;
 
   void _bind(AdvanceInfiniteScrollState<T> state) {
     _myWidgetState = state;
   }
-
-  final Future<List<T>?> Function(int page, int perPage, Map? params) onFuture;
 
   AdvanceInfiniteScrollController(
       {this.onItemCount,
@@ -24,6 +31,7 @@ class AdvanceInfiniteScrollController<T> {
       required this.onFuture,
       this.perPage = 10});
 
+  /// TO refresh the network call.
   Future<List<T>?> refresh({
     Map? params,
   }) async {
@@ -31,26 +39,18 @@ class AdvanceInfiniteScrollController<T> {
   }
 }
 
-///
-/// An [AbstractResponsiveGridList] returning the grid inside a
-/// [ListView.builder()]
-///
-///
-///
-///
-///
-class AdvanceInfiniteScroll<T> extends StatefulWidget {
-  final bool pullRefresh;
 
-  // final Future<List<T>?> Function(int page, int perPage) onFuture;
+class AdvanceInfiniteScroll<T> extends StatefulWidget {
+  /// Whether need pull refresh or not.
+  final bool pullRefresh;
+  /// Builder for getting list of widget. [listData] it will return the same getting from network.
   final List<Widget> Function(BuildContext context, List<T> listData) builder;
 
-  /// Callback function on pull up to load more data | 上拉以加载更多数据的回调函数
-
-  /// Whether it is the last page, if it is true, you can not load more | 是否为最后一页，如果为true，则无法加载更多
 
   final Widget? loadingMoreWidget;
   final Widget? loadingWidget;
+
+
   final Widget Function(AdvanceInfiniteScrollController<T> controller)?
       noDataFoundWidget;
   final Widget Function(AdvanceInfiniteScrollController<T> controller)?
@@ -63,12 +63,6 @@ class AdvanceInfiniteScroll<T> extends StatefulWidget {
   /// this object.
   ///
   final ListViewBuilderOptions? listViewBuilderOptions;
-
-  //
-  // ///
-  // /// Children of the resulting grid list.
-  // ///
-  // final List<Widget> children;
 
   ///
   /// The minimum item width of each individual item in the list. Can be smaller
@@ -268,7 +262,6 @@ class AdvanceInfiniteScrollState<T> extends State<AdvanceInfiniteScroll<T>> {
             ? widget.noDataFoundWidget!(widget.controller)
             : const Center(child: Text("NO DATA FOUND")));
       } else {
-        ///its means it is empty
         return (widget.errorWidget != null
             ? widget.errorWidget!(widget.controller)
             : const Center(child: Text("SOMETHING WENT WRONG !!")));

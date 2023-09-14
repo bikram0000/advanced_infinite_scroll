@@ -88,7 +88,10 @@ class _MyHomePageState extends State<MyHomePage> {
       body: AdvanceInfiniteScroll<String>(
         minItemWidth: MediaQuery.of(context).size.width,
         minItemsPerRow: 1,
-        controller: controller,
+        controller: AdvanceInfiniteScrollController<String>(
+          onFuture: onListFutureDummy,
+          perPage: 14,
+        ),
         noDataFoundWidget: (c) {
           return TextButton(
             onPressed: () {
