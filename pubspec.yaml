@@ -1,7 +1,9 @@
 name: advance_infinite_scroll
-description: A widget for load more and refresh handler
+description: Delve into advanced Flutter scrolling with responsive grid/list views. Enjoy seamless infinite scroll, intuitive error UIs, pull-to-refresh, and optimized visible rendering. Customize loaders and manage "no data" elegantly. Your go-to for superior scrolling.
 version: 0.0.1
-homepage:
+homepage: https://github.com/bikram0000/advance_infinite_scroll
+repository: https://github.com/bikram0000/advance_infinite_scroll
+
 
 environment:
   sdk: '>=3.0.5 <4.0.0'

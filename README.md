@@ -1,5 +1,9 @@
 # AdvanceInfiniteScroll
 
+2023 © Bikramaditya Meher
+
+[![Pub](https://img.shields.io/pub/v/advance_infinite_scroll.svg)](https://pub.dartlang.org/packages/advance_infinite_scroll) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/bikram0000/advance_infinite_scroll/blob/master/LICENSE)
+
 A versatile Flutter package for implementing advanced scrolling. Whether you're looking for infinite scrolling, responsive grid views, or customizable loaders, `AdvanceInfiniteScroll` has got you covered.
 
 ## Features:
@@ -30,6 +34,7 @@ Future<List<String>> onListFutureDummy(int page, int perPage, Map? params) async
 ```
 
 This function simulates a network call with a delay and generates dummy data.
+
 
 ### Basic Setup:
 
