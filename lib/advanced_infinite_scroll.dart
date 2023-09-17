@@ -1,4 +1,4 @@
-library advance_infinite_scroll;
+library advanced_infinite_scroll;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +6,7 @@ import 'package:quiver/iterables.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 import 'package:responsive_grid_list/src/extensions/list_extensions.dart';
 
-class AdvanceInfiniteScrollController<T> {
+class AdvancedInfiniteScrollController<T> {
   /// when rendering it will return numbers of item in a row.
   final Function(int)? onItemCount;
   /// when rendering it will return item's width
@@ -14,18 +14,18 @@ class AdvanceInfiniteScrollController<T> {
   /// it is for getting numbers of items per page from network by default
   /// it will 10.
   final int perPage;
-  /// to get the state of [AdvanceInfiniteScroll]
-  AdvanceInfiniteScrollState<T>? _myWidgetState;
+  /// to get the state of [AdvancedInfiniteScroll]
+  AdvancedInfiniteScrollState<T>? _myWidgetState;
 
 
   /// Callback function on pull up to load more data and refresh
   final Future<List<T>?> Function(int page, int perPage, Map? params) onFuture;
 
-  void _bind(AdvanceInfiniteScrollState<T> state) {
+  void _bind(AdvancedInfiniteScrollState<T> state) {
     _myWidgetState = state;
   }
 
-  AdvanceInfiniteScrollController(
+  AdvancedInfiniteScrollController(
       {this.onItemCount,
       this.onItemWidth,
       required this.onFuture,
@@ -40,7 +40,7 @@ class AdvanceInfiniteScrollController<T> {
 }
 
 
-class AdvanceInfiniteScroll<T> extends StatefulWidget {
+class AdvancedInfiniteScroll<T> extends StatefulWidget {
   /// Whether need pull refresh or not.
   final bool pullRefresh;
   /// Builder for getting list of widget. [listData] it will return the same getting from network.
@@ -51,9 +51,9 @@ class AdvanceInfiniteScroll<T> extends StatefulWidget {
   final Widget? loadingWidget;
 
 
-  final Widget Function(AdvanceInfiniteScrollController<T> controller)?
+  final Widget Function(AdvancedInfiniteScrollController<T> controller)?
       noDataFoundWidget;
-  final Widget Function(AdvanceInfiniteScrollController<T> controller)?
+  final Widget Function(AdvancedInfiniteScrollController<T> controller)?
       errorWidget;
 
   ///
@@ -114,11 +114,11 @@ class AdvanceInfiniteScroll<T> extends StatefulWidget {
   final MainAxisAlignment rowMainAxisAlignment; // coverage:ignore-end
 
   ///
-  ///[AdvanceInfiniteScrollController] it can help to refresh the list manually,
+  ///[AdvancedInfiniteScrollController] it can help to refresh the list manually,
   ///
-  final AdvanceInfiniteScrollController<T> controller;
+  final AdvancedInfiniteScrollController<T> controller;
 
-  const AdvanceInfiniteScroll({
+  const AdvancedInfiniteScroll({
     super.key,
     this.listViewBuilderOptions,
     required this.minItemWidth,
@@ -232,11 +232,11 @@ class AdvanceInfiniteScroll<T> extends StatefulWidget {
   }
 
   @override
-  AdvanceInfiniteScrollState<T> createState() =>
-      AdvanceInfiniteScrollState<T>();
+  AdvancedInfiniteScrollState<T> createState() =>
+      AdvancedInfiniteScrollState<T>();
 }
 
-class AdvanceInfiniteScrollState<T> extends State<AdvanceInfiniteScroll<T>> {
+class AdvancedInfiniteScrollState<T> extends State<AdvancedInfiniteScroll<T>> {
   List<T>? futureList;
   int page = 1;
   bool? isLastPage;

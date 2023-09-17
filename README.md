@@ -1,10 +1,10 @@
-# AdvanceInfiniteScroll
+# AdvancedInfiniteScroll
 
 2023 © Bikramaditya Meher
 
-[![Pub](https://img.shields.io/pub/v/advance_infinite_scroll.svg)](https://pub.dartlang.org/packages/advance_infinite_scroll) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/bikram0000/advance_infinite_scroll/blob/master/LICENSE)
+[![Pub](https://img.shields.io/pub/v/advanced_infinite_scroll.svg)](https://pub.dartlang.org/packages/advanced_infinite_scroll) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/bikram0000/advanced_infinite_scroll/blob/master/LICENSE)
 
-A versatile Flutter package for implementing advanced scrolling. Whether you're looking for infinite scrolling, responsive grid views, or customizable loaders, `AdvanceInfiniteScroll` has got you covered.
+A versatile Flutter package for implementing advanced scrolling. Whether you're looking for infinite scrolling, responsive grid views, or customizable loaders, `AdvancedInfiniteScroll` has got you covered.
 
 ## Features:
 
@@ -18,7 +18,7 @@ A versatile Flutter package for implementing advanced scrolling. Whether you're 
 
 ## Usage:
 
-To use this package, add `advance_infinite_scroll` as a dependency in your `pubspec.yaml` file.
+To use this package, add `advanced_infinite_scroll` as a dependency in your `pubspec.yaml` file.
 
 ### Data Fetching:
 
@@ -41,10 +41,10 @@ This function simulates a network call with a delay and generates dummy data.
 Here's a simple example demonstrating the usage:
 
 ```dart
-AdvanceInfiniteScroll<String>(
+AdvancedInfiniteScroll<String>(
     minItemWidth: MediaQuery.of(context).size.width,
     minItemsPerRow: 1,
-    controller: AdvanceInfiniteScrollController<String>(
+    controller: AdvancedInfiniteScrollController<String>(
       onFuture: onListFutureDummy,
       perPage: 14,
     ),
@@ -86,7 +86,7 @@ Here's a brief overview of the key parameters:
 
 - `minItemWidth`: The minimum width for an item.
 - `minItemsPerRow`: The minimum number of items per row.
-- `controller`: The controller associated with `AdvanceInfiniteScroll`.
+- `controller`: The controller associated with `AdvancedInfiniteScroll`.
 - `loadingMoreWidget`: A widget to display while more items are being loaded.
 - `builder`: A function that returns a list of widgets based on the provided data.
 

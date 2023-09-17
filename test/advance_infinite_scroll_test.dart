@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:advance_infinite_scroll/advance_infinite_scroll.dart';
+import 'package:advanced_infinite_scroll/advanced_infinite_scroll.dart';
 
 void main() {
   test('adds one to input values', () {

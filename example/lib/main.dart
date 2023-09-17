@@ -1,4 +1,4 @@
-import 'package:advance_infinite_scroll/advance_infinite_scroll.dart';
+import 'package:advanced_infinite_scroll/advanced_infinite_scroll.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -56,12 +56,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late AdvanceInfiniteScrollController<String> controller;
+  late AdvancedInfiniteScrollController<String> controller;
 
   @override
   void initState() {
     super.initState();
-    controller = AdvanceInfiniteScrollController(
+    controller = AdvancedInfiniteScrollController(
       onFuture: onListFutureDummy,
       perPage: 14,
     );
@@ -85,10 +85,10 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: AdvanceInfiniteScroll<String>(
+      body: AdvancedInfiniteScroll<String>(
         minItemWidth: MediaQuery.of(context).size.width,
         minItemsPerRow: 1,
-        controller: AdvanceInfiniteScrollController<String>(
+        controller: AdvancedInfiniteScrollController<String>(
           onFuture: onListFutureDummy,
           perPage: 14,
         ),
