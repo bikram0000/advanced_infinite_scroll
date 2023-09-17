@@ -1,22 +1,24 @@
 library advanced_infinite_scroll;
 
+import 'package:advanced_infinite_scroll/utility.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:quiver/iterables.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
-import 'package:responsive_grid_list/src/extensions/list_extensions.dart';
 
 class AdvancedInfiniteScrollController<T> {
   /// when rendering it will return numbers of item in a row.
   final Function(int)? onItemCount;
+
   /// when rendering it will return item's width
   final Function(double)? onItemWidth;
+
   /// it is for getting numbers of items per page from network by default
   /// it will 10.
   final int perPage;
+
   /// to get the state of [AdvancedInfiniteScroll]
   AdvancedInfiniteScrollState<T>? _myWidgetState;
-
 
   /// Callback function on pull up to load more data and refresh
   final Future<List<T>?> Function(int page, int perPage, Map? params) onFuture;
@@ -39,17 +41,15 @@ class AdvancedInfiniteScrollController<T> {
   }
 }
 
-
 class AdvancedInfiniteScroll<T> extends StatefulWidget {
   /// Whether need pull refresh or not.
   final bool pullRefresh;
+
   /// Builder for getting list of widget. [listData] it will return the same getting from network.
   final List<Widget> Function(BuildContext context, List<T> listData) builder;
 
-
   final Widget? loadingMoreWidget;
   final Widget? loadingWidget;
-
 
   final Widget Function(AdvancedInfiniteScrollController<T> controller)?
       noDataFoundWidget;
