@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:quiver/iterables.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
+export 'package:responsive_grid_list/responsive_grid_list.dart';
 
 class AdvancedInfiniteScrollController<T> {
   /// when rendering it will return numbers of item in a row.
@@ -18,13 +19,13 @@ class AdvancedInfiniteScrollController<T> {
   final int perPage;
 
   /// to get the state of [AdvancedInfiniteScroll]
-  AdvancedInfiniteScrollState<T>? _myWidgetState;
+  AdvancedInfiniteScrollState<T>? widgetState;
 
   /// Callback function on pull up to load more data and refresh
   final Future<List<T>?> Function(int page, int perPage, Map? params) onFuture;
 
   void _bind(AdvancedInfiniteScrollState<T> state) {
-    _myWidgetState = state;
+    widgetState = state;
   }
 
   AdvancedInfiniteScrollController(
@@ -37,8 +38,9 @@ class AdvancedInfiniteScrollController<T> {
   Future<List<T>?> refresh({
     Map? params,
   }) async {
-    return await _myWidgetState?.loadFutureList(params: params);
+    return await widgetState?.loadFutureList(params: params);
   }
+
 }
 
 class AdvancedInfiniteScroll<T> extends StatefulWidget {
