@@ -1,10 +1,12 @@
-# AdvancedInfiniteScroll
+# Advanced Infinite Scroll
 
 2023 © Bikramaditya Meher
 
 [![Pub](https://img.shields.io/pub/v/advanced_infinite_scroll.svg)](https://pub.dartlang.org/packages/advanced_infinite_scroll) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/bikram0000/advanced_infinite_scroll/blob/master/LICENSE)
 
 A versatile Flutter package for implementing advanced scrolling. Whether you're looking for infinite scrolling, responsive grid views, or customizable loaders, `AdvancedInfiniteScroll` has got you covered.
+
+![](example/assets/ezgif-4-9547c1c63f.gif) ![](example/assets/ezgif-4-2b42dfdc9e.gif)
 
 ## Features:
 
