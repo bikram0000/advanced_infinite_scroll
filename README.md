@@ -6,7 +6,7 @@
 
 A versatile Flutter package for implementing advanced scrolling. Whether you're looking for infinite scrolling, responsive grid views, or customizable loaders, `AdvancedInfiniteScroll` has got you covered.
 
-<img src="example/assets/ezgif-4-9547c1c63f.gif" width="320" height="480"> <img src="example/assets/ezgif-4-2b42dfdc9e.gif" width="320" height="480">
+<img src="example/assets/ezgif-4-9547c1c63f.gif" width="320"> <img src="example/assets/ezgif-4-2b42dfdc9e.gif" width="320">
 
 
 ## Features:
