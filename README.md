@@ -46,43 +46,49 @@ This function simulates a network call with a delay and generates dummy data.
 Here's a simple example demonstrating the usage:
 
 ```dart
-AdvancedInfiniteScroll<String>(
-    minItemWidth: MediaQuery.of(context).size.width,
-    minItemsPerRow: 1,
-    controller: AdvancedInfiniteScrollController<String>(
-      onFuture: onListFutureDummy,
-      perPage: 14,
-    ),
-    noDataFoundWidget: (c) {
-      return TextButton(
-        onPressed: () {
-          c.refresh();
-        },
-        child: const Text("Refresh"),
-      );
-    },
-    loadingMoreWidget: const Center(
-      child: CircularProgressIndicator(),
-    ),
-    builder: (BuildContext context, listData) {
-      return [
-        Container(
+     AdvancedInfiniteScroll<String>(
+        minItemWidth: 120,
+        minItemsPerRow: 1,
+        maxItemsPerRow: 1,
+        controller: controller,
+        loaderSize: 1,
+        headerWidget: Container(
+          height: 50,
           color: Colors.green,
-          child: SizedBox(
-            height: 100,
-            width: MediaQuery.of(context).size.width,
+          child: const Center(child: Text("Header")),
+        ),
+        footerWidget: Container(
+          height: 50,
+          color: Colors.red,
+          child: const Center(child: Text("Header")),
+        ),
+        noDataFoundWidget: (c) {
+          return TextButton(
+            onPressed: () {
+              c.refresh();
+            },
+            child: const Text("Refresh"),
+          );
+        },
+        loadingWidget: const Center(child: CircularProgressIndicator()),
+        // onFuture: onListFutureDummy,
+        loadingMoreWidget: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: LinearProgressIndicator(
+              minHeight: 60,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.grey.shade50),
+            ),
           ),
         ),
-        ...List.generate(listData.length, (index) {
+        builder: (BuildContext context, listData, index) {
           return ListTile(
             title: Text(
               "${listData[index]}:: INDEX :: $index ::",
             ),
           );
-        }),
-      ];
-    },
-)
+        },
+      ),
 ```
 
 ### Parameters:

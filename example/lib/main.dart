@@ -94,12 +94,12 @@ class _MyHomePageState extends State<MyHomePage> {
         headerWidget: Container(
           height: 50,
           color: Colors.green,
-          child: Center(child: const Text("Header")),
+          child: const Center(child: Text("Header")),
         ),
         footerWidget: Container(
           height: 50,
           color: Colors.red,
-          child: Center(child: const Text("Header")),
+          child: const Center(child: Text("Header")),
         ),
         noDataFoundWidget: (c) {
           return TextButton(
@@ -109,11 +109,11 @@ class _MyHomePageState extends State<MyHomePage> {
             child: const Text("Refresh"),
           );
         },
-        loadingWidget: Center(child: const CircularProgressIndicator()),
+        loadingWidget: const Center(child: CircularProgressIndicator()),
         // onFuture: onListFutureDummy,
         loadingMoreWidget: Center(
           child: Padding(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: LinearProgressIndicator(
               minHeight: 60,
               valueColor: AlwaysStoppedAnimation<Color>(Colors.grey.shade50),
