@@ -18,6 +18,8 @@ A versatile Flutter package for implementing advanced scrolling. Whether you're 
 - "No Data Found" Widget Handling
 - "ON ERROR" Widget Handling,
 - Optimized Rendering for Visible Items
+- Header/Footer widget
+- empty loader size (check example)
 
 ## Usage:
 

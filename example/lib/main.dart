@@ -86,11 +86,20 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: AdvancedInfiniteScroll<String>(
-        minItemWidth: MediaQuery.of(context).size.width,
+        minItemWidth: 120,
         minItemsPerRow: 1,
-        controller: AdvancedInfiniteScrollController<String>(
-          onFuture: onListFutureDummy,
-          perPage: 14,
+        maxItemsPerRow: 1,
+        controller: controller,
+        loaderSize: 1,
+        headerWidget: Container(
+          height: 50,
+          color: Colors.green,
+          child: Center(child: const Text("Header")),
+        ),
+        footerWidget: Container(
+          height: 50,
+          color: Colors.red,
+          child: Center(child: const Text("Header")),
         ),
         noDataFoundWidget: (c) {
           return TextButton(
@@ -100,27 +109,23 @@ class _MyHomePageState extends State<MyHomePage> {
             child: const Text("Refresh"),
           );
         },
+        loadingWidget: Center(child: const CircularProgressIndicator()),
         // onFuture: onListFutureDummy,
-        loadingMoreWidget: const Center(
-          child: CircularProgressIndicator(),
-        ),
-        builder: (BuildContext context, listData) {
-          return [
-            Container(
-              color: Colors.green,
-              child: SizedBox(
-                height: 100,
-                width: MediaQuery.of(context).size.width,
-              ),
+        loadingMoreWidget: Center(
+          child: Padding(
+            padding: EdgeInsets.all(10),
+            child: LinearProgressIndicator(
+              minHeight: 60,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.grey.shade50),
             ),
-            ...List.generate(listData.length, (index) {
-              return ListTile(
-                title: Text(
-                  "${listData[index]}:: INDEX :: $index ::",
-                ),
-              );
-            }),
-          ];
+          ),
+        ),
+        builder: (BuildContext context, listData, index) {
+          return ListTile(
+            title: Text(
+              "${listData[index]}:: INDEX :: $index ::",
+            ),
+          );
         },
       ),
       floatingActionButton: FloatingActionButton(

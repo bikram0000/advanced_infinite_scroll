@@ -1,11 +1,9 @@
 library advanced_infinite_scroll;
 
-import 'package:advanced_infinite_scroll/utility.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:quiver/iterables.dart';
-import 'package:responsive_grid_list/responsive_grid_list.dart';
-export 'package:responsive_grid_list/responsive_grid_list.dart';
+
+import 'list_view_builder_options.dart';
 
 class AdvancedInfiniteScrollController<T> {
   /// when rendering it will return numbers of item in a row.
@@ -40,7 +38,6 @@ class AdvancedInfiniteScrollController<T> {
   }) async {
     return await widgetState?.loadFutureList(params: params);
   }
-
 }
 
 class AdvancedInfiniteScroll<T> extends StatefulWidget {
@@ -48,10 +45,14 @@ class AdvancedInfiniteScroll<T> extends StatefulWidget {
   final bool pullRefresh;
 
   /// Builder for getting list of widget. [listData] it will return the same getting from network.
-  final List<Widget> Function(BuildContext context, List<T> listData) builder;
+  final Widget Function(BuildContext context, List<T> listData, int index)
+      builder;
 
   final Widget? loadingMoreWidget;
   final Widget? loadingWidget;
+
+  final Widget? headerWidget;
+  final Widget? footerWidget;
 
   final Widget Function(AdvancedInfiniteScrollController<T> controller)?
       noDataFoundWidget;
@@ -90,6 +91,9 @@ class AdvancedInfiniteScroll<T> extends StatefulWidget {
   ///
   final int? maxItemsPerRow;
 
+  ///how many more list you want to show as an loader.
+  final int? loaderSize;
+
   ///
   /// The horizontal spacing between the items in the grid.
   ///
@@ -125,12 +129,14 @@ class AdvancedInfiniteScroll<T> extends StatefulWidget {
     this.listViewBuilderOptions,
     required this.minItemWidth,
     required this.minItemsPerRow,
+    this.maxItemsPerRow,
     this.horizontalGridSpacing = 1,
     this.verticalGridSpacing = 1,
-    this.rowMainAxisAlignment = MainAxisAlignment.center,
-    this.maxItemsPerRow,
+    this.rowMainAxisAlignment = MainAxisAlignment.start,
     this.horizontalGridMargin,
     this.verticalGridMargin,
+    this.footerWidget,
+    this.headerWidget,
 
     ///related to load more..
     this.pullRefresh = true,
@@ -139,6 +145,7 @@ class AdvancedInfiniteScroll<T> extends StatefulWidget {
     ///loader..
     this.loadingMoreWidget = const Center(child: CircularProgressIndicator()),
     this.loadingWidget,
+    this.loaderSize,
     this.noDataFoundWidget,
     this.errorWidget,
     required this.controller,
@@ -157,14 +164,12 @@ class AdvancedInfiniteScroll<T> extends StatefulWidget {
           '($minItemsPerRow). It instead was set to $maxItemsPerRow',
         );
 
-  ///
-  /// Method to generate a list of [ResponsiveGridRow]'s with spacing in between
-  /// them.
-  ///
-  /// [maxWidth] is the maximum width of the current layout.
-  ///
-  List<Widget> getResponsiveGridListItems(
-      double maxWidth, List<Widget> children) {
+  Map<String, dynamic> getItemCountAndWidth(
+    double maxWidth,
+    int length,
+  ) {
+    double itemWidth;
+
     // Start with the minimum allowed number of items per row.
     var itemsPerRow = minItemsPerRow;
 
@@ -198,39 +203,20 @@ class AdvancedInfiniteScroll<T> extends StatefulWidget {
 
     // Calculate the itemWidth that results from the maxWidth and number of
     // spacers and outer margin (horizontal)
-    final itemWidth = (maxWidth -
+    itemWidth = (maxWidth -
             (spacePerRow * horizontalGridSpacing) -
             (2 * (horizontalGridMargin ?? 0))) /
         itemsPerRow;
+    // partition(length, itemsPerRow)
+    int quotient = length ~/ itemsPerRow; // Quotient
+    int remainder = length % itemsPerRow; // Remainder
 
-    // Partition the items into groups of itemsPerRow length and map them
-    // to ResponsiveGridRow's
-    final items = partition(children, itemsPerRow)
-        .map<Widget>(
-          (e) => ResponsiveGridRow(
-            rowItems: e,
-            spacing: horizontalGridSpacing,
-            horizontalGridMargin: horizontalGridMargin,
-            itemWidth: itemWidth,
-            rowMainAxisAlignment: rowMainAxisAlignment,
-          ),
-        )
-        .toList();
-
-    // Join the rows width spacing in between them (vertical)
-    final responsiveGridListItems =
-        items.genericJoin(SizedBox(height: verticalGridSpacing));
-
-    // Add outer margin (vertical) if set
-    if (verticalGridMargin != null) {
-      return [
-        SizedBox(height: verticalGridMargin),
-        ...responsiveGridListItems,
-        SizedBox(height: verticalGridMargin)
-      ];
-    }
-
-    return responsiveGridListItems;
+    return {
+      'item_count': itemsPerRow,
+      'item_width': itemWidth,
+      'quotient': quotient,
+      'remainder': remainder,
+    };
   }
 
   @override
@@ -271,40 +257,90 @@ class AdvancedInfiniteScrollState<T> extends State<AdvancedInfiniteScroll<T>> {
     }
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        // Get the grid list items
-        final items = widget.getResponsiveGridListItems(
+        Map<String, dynamic> items = widget.getItemCountAndWidth(
           constraints.maxWidth -
               (widget.listViewBuilderOptions?.padding?.horizontal ?? 0),
-          widget.builder(
-            context,
-            futureList!,
-          ),
+          futureList!.length,
         );
 
         if (widget.controller.onItemCount != null) {
-          if (items.first is ResponsiveGridRow) {
-            if (widget.controller.onItemCount != null) {
-              widget.controller.onItemCount!(
-                  (items.first as ResponsiveGridRow).rowItems.length);
-            }
-            if (widget.controller.onItemWidth != null) {
-              widget.controller
-                  .onItemWidth!((items.first as ResponsiveGridRow).itemWidth);
-            }
-          }
+          widget.controller.onItemCount!(items['item_count']);
         }
+        if (widget.controller.onItemWidth != null) {
+          widget.controller.onItemWidth!(items['item_width']);
+        }
+        int itemCount = (items['quotient']) + (items['remainder'] > 0 ? 1 : 0);
+        int indexAdd = (widget.loadingMoreWidget != null ? 1 : 0) +
+            (widget.headerWidget != null ? 1 : 0) +
+            (widget.footerWidget != null ? 1 : 0) +
+            ((widget.loaderSize ?? 1) - 1);
+        itemCount = indexAdd + itemCount;
         Widget child = ListView.builder(
-          itemCount: items.length + (widget.loadingMoreWidget != null ? 1 : 0),
+          itemCount: itemCount,
           itemBuilder: (BuildContext context, int index) {
-            if (index >= items.length) {
+            if (index >= itemCount - 1) {
+              if (!(isLastPage ?? true)) {
+                loadFutureList(loadMore: true);
+              }
+            }
+            if (widget.footerWidget != null && (index >= itemCount - 1)) {
+              return widget.footerWidget;
+            } else if ((index >=
+                    (itemCount - 1) - (widget.footerWidget != null ? 1 : 0) &&
+                ((widget.maxItemsPerRow == 1) ||
+                    widget.loaderSize == null))) {
               if (isLastPage ?? true) {
                 return const SizedBox();
               } else {
-                loadFutureList(loadMore: true);
-                return widget.loadingMoreWidget;
+                if (widget.maxItemsPerRow != 1 &&
+                    widget.loaderSize != null) {
+                  return const SizedBox();
+                } else {
+                  return widget.loadingMoreWidget;
+                }
               }
+            } else if (widget.headerWidget != null && ((index == 0))) {
+              return widget.headerWidget;
             } else {
-              return items[index];
+              index = widget.headerWidget != null ? (index - 1) : index;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (widget.verticalGridMargin != null)
+                    SizedBox(height: widget.verticalGridMargin),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: widget.rowMainAxisAlignment,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (widget.horizontalGridMargin != null)
+                        SizedBox(width: widget.horizontalGridMargin),
+                      ...List.generate(items['item_count'], (i) {
+                        int index2 =
+                            (i + (items['item_count'] * (index))).toInt();
+                        return SizedBox(
+                          width: items['item_width'],
+                          child: ((futureList!.length - 1) < index2)
+                              ? widget.loaderSize == null
+                                  ? const SizedBox()
+                                  : widget.loadingMoreWidget ??
+                                      const LinearProgressIndicator()
+                              : widget.builder(
+                                  context,
+                                  futureList!,
+                                  (i + (items['item_count'] * (index))).toInt(),
+                                ),
+                        );
+                      }),
+                      if (widget.horizontalGridMargin != null)
+                        SizedBox(width: widget.horizontalGridMargin),
+                    ],
+                  ),
+                  if (widget.verticalGridMargin != null)
+                    SizedBox(height: widget.verticalGridMargin),
+                ],
+              );
             }
           },
           scrollDirection:
