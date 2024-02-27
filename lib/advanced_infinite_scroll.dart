@@ -73,6 +73,12 @@ class AdvancedInfiniteScroll<T> extends StatefulWidget {
   ///
   final double minItemWidth;
 
+ ///
+  ///
+  /// If you wanted to keep Alive this widget with tabs.
+  ///
+  final bool keepAlive;
+
   ///
   /// Minimum items to show per row. If this is set to a value higher than 1,
   /// this takes precedence over [minItemWidth] and allows items to be smaller
@@ -137,6 +143,7 @@ class AdvancedInfiniteScroll<T> extends StatefulWidget {
     this.verticalGridMargin,
     this.footerWidget,
     this.headerWidget,
+    this.keepAlive=false,
 
     ///related to load more..
     this.pullRefresh = true,
@@ -224,11 +231,15 @@ class AdvancedInfiniteScroll<T> extends StatefulWidget {
       AdvancedInfiniteScrollState<T>();
 }
 
-class AdvancedInfiniteScrollState<T> extends State<AdvancedInfiniteScroll<T>> {
+class AdvancedInfiniteScrollState<T> extends State<AdvancedInfiniteScroll<T>>  with AutomaticKeepAliveClientMixin<AdvancedInfiniteScroll<T>>{
   List<T>? futureList;
   int page = 1;
   bool? isLastPage;
   bool loadingFuture = false;
+
+
+  @override
+  bool get wantKeepAlive => widget.keepAlive;
 
   @override
   void initState() {
