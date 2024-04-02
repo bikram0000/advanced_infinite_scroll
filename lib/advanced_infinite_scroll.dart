@@ -1,5 +1,7 @@
 library advanced_infinite_scroll;
 
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -73,7 +75,7 @@ class AdvancedInfiniteScroll<T> extends StatefulWidget {
   ///
   final double minItemWidth;
 
- ///
+  ///
   ///
   /// If you wanted to keep Alive this widget with tabs.
   ///
@@ -143,7 +145,7 @@ class AdvancedInfiniteScroll<T> extends StatefulWidget {
     this.verticalGridMargin,
     this.footerWidget,
     this.headerWidget,
-    this.keepAlive=false,
+    this.keepAlive = false,
 
     ///related to load more..
     this.pullRefresh = true,
@@ -231,12 +233,14 @@ class AdvancedInfiniteScroll<T> extends StatefulWidget {
       AdvancedInfiniteScrollState<T>();
 }
 
-class AdvancedInfiniteScrollState<T> extends State<AdvancedInfiniteScroll<T>>  with AutomaticKeepAliveClientMixin<AdvancedInfiniteScroll<T>>{
+class AdvancedInfiniteScrollState<T> extends State<AdvancedInfiniteScroll<T>>
+    with AutomaticKeepAliveClientMixin<AdvancedInfiniteScroll<T>> {
   List<T>? futureList;
   int page = 1;
   bool? isLastPage;
   bool loadingFuture = false;
-
+  int requestingTime = 0;
+  List<Completer> completerList = [];
 
   @override
   bool get wantKeepAlive => widget.keepAlive;
@@ -249,6 +253,7 @@ class AdvancedInfiniteScrollState<T> extends State<AdvancedInfiniteScroll<T>>  w
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     widget.controller._bind(this);
     if ((futureList == null || (futureList as List).isEmpty)) {
       if (loadingFuture) {
@@ -268,6 +273,7 @@ class AdvancedInfiniteScrollState<T> extends State<AdvancedInfiniteScroll<T>>  w
     }
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
+        futureList ??= [];
         Map<String, dynamic> items = widget.getItemCountAndWidth(
           constraints.maxWidth -
               (widget.listViewBuilderOptions?.padding?.horizontal ?? 0),
@@ -290,7 +296,7 @@ class AdvancedInfiniteScrollState<T> extends State<AdvancedInfiniteScroll<T>>  w
           itemCount: itemCount,
           itemBuilder: (BuildContext context, int index) {
             if (index >= itemCount - 1) {
-              if (!(isLastPage ?? true)) {
+              if (!(isLastPage ?? true) && !loadingFuture) {
                 loadFutureList(loadMore: true);
               }
             }
@@ -298,13 +304,11 @@ class AdvancedInfiniteScrollState<T> extends State<AdvancedInfiniteScroll<T>>  w
               return widget.footerWidget;
             } else if ((index >=
                     (itemCount - 1) - (widget.footerWidget != null ? 1 : 0) &&
-                ((widget.maxItemsPerRow == 1) ||
-                    widget.loaderSize == null))) {
+                ((widget.maxItemsPerRow == 1) || widget.loaderSize == null))) {
               if (isLastPage ?? true) {
                 return const SizedBox();
               } else {
-                if (widget.maxItemsPerRow != 1 &&
-                    widget.loaderSize != null) {
+                if (widget.maxItemsPerRow != 1 && widget.loaderSize != null) {
                   return const SizedBox();
                 } else {
                   return widget.loadingMoreWidget;
@@ -410,8 +414,11 @@ class AdvancedInfiniteScrollState<T> extends State<AdvancedInfiniteScroll<T>>  w
 
   Future<List<T>?> loadFutureList({bool loadMore = false, Map? params}) async {
     if (loadingFuture) {
-      return null;
+      completerList[requestingTime].complete(null);
+      requestingTime++;
     }
+    int times = requestingTime;
+    completerList.add(Completer());
     if (loadMore) {
       page++;
     } else {
@@ -423,26 +430,41 @@ class AdvancedInfiniteScrollState<T> extends State<AdvancedInfiniteScroll<T>>  w
     loadingFuture = true;
     update();
     try {
-      List<T>? futureList2 = await widget.controller
-          .onFuture(page, widget.controller.perPage, params);
+      widget.controller
+          .onFuture(page, widget.controller.perPage, params)
+          .then((value) {
+            if(completerList.length>times && !completerList[times].isCompleted) {
+              completerList[times].complete(value);
+            }
+      });
+      List<T>? futureList2 = await completerList[times].future;
       if (futureList2 != null) {
+        if(times==requestingTime){
+          requestingTime=0;
+          completerList.clear();
+        }
         if (page == 1) {
           futureList = futureList2;
         } else {
           futureList?.addAll(futureList2);
         }
-
         if ((futureList2).length == widget.controller.perPage) {
           isLastPage = false;
         } else {
           isLastPage = true;
         }
       }
+
     } catch (e) {
       debugPrint("ERROR AIS ::  $e");
     }
-    loadingFuture = false;
-    update();
+    if(requestingTime!=0){
+      // requestingTime--;
+
+    }else {
+      loadingFuture = false;
+      update();
+    }
     return futureList;
   }
 
