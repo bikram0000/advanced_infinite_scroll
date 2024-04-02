@@ -50,6 +50,7 @@ Here's a simple example demonstrating the usage:
         minItemWidth: 120,
         minItemsPerRow: 1,
         maxItemsPerRow: 1,
+        keepAlive:true,
         controller: controller,
         loaderSize: 1,
         headerWidget: Container(
@@ -96,6 +97,7 @@ Here's a simple example demonstrating the usage:
 Here's a brief overview of the key parameters:
 
 - `minItemWidth`: The minimum width for an item.
+- `keepAlive`: If you wanted to keep Alive this widget.
 - `minItemsPerRow`: The minimum number of items per row.
 - `controller`: The controller associated with `AdvancedInfiniteScroll`.
 - `loadingMoreWidget`: A widget to display while more items are being loaded.
