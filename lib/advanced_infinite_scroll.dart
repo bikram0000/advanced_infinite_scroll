@@ -444,7 +444,6 @@ class AdvancedInfiniteScrollState<T> extends State<AdvancedInfiniteScroll<T>>
   }
 
   Future<List<T>?> loadFutureList({bool loadMore = false, Map? params}) async {
-    print('sdfsadf');
     if (loadingFuture) {
       completerList[requestingTime].complete(null);
       requestingTime++;
