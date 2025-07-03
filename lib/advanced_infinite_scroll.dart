@@ -29,6 +29,7 @@ class AdvancedInfiniteScrollController<T> {
   final bool? noDataFound;
   final int? page;
   final bool? isLastPage;
+  final Function? onInitView;
 
   void _bind(AdvancedInfiniteScrollState<T> state) {
     widgetState = state;
@@ -39,6 +40,7 @@ class AdvancedInfiniteScrollController<T> {
       this.onItemWidth,
       required this.onFuture,
       this.futureList,
+      this.onInitView,
       this.isLoading,
       this.noDataFound,
       this.page,
@@ -259,16 +261,21 @@ class AdvancedInfiniteScrollState<T> extends State<AdvancedInfiniteScroll<T>>
   @override
   void initState() {
     super.initState();
-    loadFutureList();
+    widget.controller._bind(this);
+    if (widget.controller.onInitView != null) {
+      widget.controller.onInitView!();
+    } else {
+      loadFutureList();
+    }
+    if (widget.controller.futureList != null) {
+      futureList = widget.controller.futureList;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    widget.controller._bind(this);
-    if (widget.controller.futureList != null) {
-      futureList = widget.controller.futureList;
-    }
+
     if ((futureList == null || (futureList as List).isEmpty)) {
       if (loadingFuture || (widget.controller.isLoading ?? false)) {
         return (widget.loadingWidget ??
@@ -437,6 +444,7 @@ class AdvancedInfiniteScrollState<T> extends State<AdvancedInfiniteScroll<T>>
   }
 
   Future<List<T>?> loadFutureList({bool loadMore = false, Map? params}) async {
+    print('sdfsadf');
     if (loadingFuture) {
       completerList[requestingTime].complete(null);
       requestingTime++;
